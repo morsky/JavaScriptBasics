@@ -13,8 +13,12 @@ function main() {
 
 	while(true) {
 
+		if (userInput == '' || userInput == null) {
+			userInput = prompt('Please enter an expression.');
+			continue;
+		}
+
 		convertedInput = firstCheck(userInput);
-		convertedInput = checkDots(convertedInput);
 		convertedInput = removeMultipleSigns(convertedInput);
 
 		if (userInput.length == convertedInput.length) {
@@ -30,7 +34,6 @@ function main() {
 			if (userInput == null) {
 				break;
 			} else {
-				document.getElementById('input').innerHTML = 'hm....';
 				continue;
 			}			
 		}
@@ -42,10 +45,9 @@ function main() {
 }
 
 //Get form input only numbers (0-9), signs (+, -, * , /) and decimal point (.)
-function firstCheck(input) {
-	
+function firstCheck(input) {	
 	var length = input.length;	
-	var pattern = /[0-9.+\-*\/]/;	//regular expresion to select numbers, signs ans decimal point
+	var pattern = /[0-9+\-*\/]/;	//regular expresion to select numbers and
 	var firstPass = '';
 
 	for (var i = 0; i < length; i++) {
@@ -58,86 +60,49 @@ function firstCheck(input) {
 	return firstPass;
 }
 
-//Reduce decimal point to be only one between two signs
-function checkDots(input) {
+//Remove signs that appear one after another. Keep first one and remove other.
+function removeMultipleSigns(input) {
 	var length = input.length;
-	var dot = false;
+	var sign = false;
 	var pattern = /[+\-*\/]/;
 	var secondPass = '';
+	var firstElement;
+	var lastElement;
 
 	for (var i = 0; i < length; i++) {
 
-		if (input[i] == '.') {
+		if (input[i].match(pattern)) {
 			
-			if (dot) {				
+			if (sign) {				
 				continue;
 			} else {
 				secondPass += input[i];
-				dot = true;
+				sign = true;
 				continue;
 			}
 		
-		} else if (input[i].match(pattern)) {
-			dot = false;
+		} else {
+			sign = false;
 		}
 	
 		secondPass += input[i];		
 	}
 
-	//Remove decimal point at the end of expression
-	if (secondPass[secondPass.length - 1] == '.') {
-		secondPass = secondPass.substring(0, secondPass.length - 1);
-	}
-
-	return secondPass;
-}
-
-//Remove signs that appear one after another. Keep first one and remove other.
-function removeMultipleSigns(input) {
-	var length = input.length;
-	var sign = true;
-	var pattern = /[+\-*\/]/;
-	var thirdPass = '';
-	var firstElement;
-	var lastElement;
-
-	for (var i = 0; i <= length - 1; i++) {		
-		
-		if (input[i].match(pattern)) {
-			
-			if (sign) {
-				thirdPass += input[i];
-				sign = false;
-
-				if (i == length - 1) {
-					continue;
-				}
-			}
-
-			if (!input[i + 1].match(pattern)) {
-				sign = true;
-			}
-
-		} else {
-			thirdPass += input[i];
-		}			
-	}
-
-	firstElement = thirdPass[0];
-	lastElement = thirdPass[thirdPass.length - 1];
+	firstElement = secondPass[0];
+	lastElement = secondPass[secondPass.length - 1];
 
 	//Only minus signa (-) and decimal point (.) are allowed i the begining of the expression
 	if (firstElement.match(/[+*\/]/)) {
-		thirdPass = thirdPass.replace(thirdPass[0], '');
+		secondPass = secondPass.replace(secondPass[0], '');
 	}
 
 	//Remove any sign left at the end of the expression
 	if (lastElement.match(pattern)) {
-		// thirdPass = thirdPass.replace(thirdPass.substring(thirdPass.length - 1), '');
-		thirdPass = thirdPass.substring(0, thirdPass.length - 1);	
+		// secondPass = secondPass.replace(secondPass.substring(secondPass.length - 1), '');
+		secondPass = secondPass.substring(0, secondPass.length - 1);	
 	}
 
-	return thirdPass;
+	return secondPass;
 }
 
 function calcualte(input) {
