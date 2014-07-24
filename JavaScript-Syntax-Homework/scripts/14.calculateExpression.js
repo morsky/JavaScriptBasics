@@ -30,6 +30,7 @@ function main() {
 					'or enter new expression end press Ok', convertedInput);
 
 			userInput = calculateExpression;
+			document.getElementById('input').value = convertedInput;
 
 			if (userInput == null) {
 				break;
